@@ -7,7 +7,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import com.sparta.spartascheduler.entity.UserStatus;
+import com.sparta.spartascheduler.entity.UserRoleEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,7 +32,7 @@ public class JwtUtil {
     // Token 식별자
     public static final String BEARER_PREFIX = "Bearer ";
     // 토큰 만료시간
-    private final long ACCESS_TOKEN_TIME = 30 * 60 * 1000L; // 30분
+    private final long ACCESS_TOKEN_TIME = 60 * 60 * 1000L; // 30분
     private final long REFRESH_TOKEN_TIME = 14 * 24 * 60 * 60 * 1000L; // 2주
 
     @Value("${jwt.secret.key}") // Base64 Encode 한 SecretKey
@@ -50,8 +50,8 @@ public class JwtUtil {
     }
 
     // AccessToken 생성
-    public String createAccessToken(String username, UserStatus status) {
-        return createToken(username, status, ACCESS_TOKEN_TIME);
+    public String createAccessToken(String username, UserRoleEnum role) {
+        return createToken(username, role, ACCESS_TOKEN_TIME);
     }
 
     // RefreshToken 생성
@@ -60,7 +60,7 @@ public class JwtUtil {
     }
 
     // 토큰 생성 (내부에서 사용)
-    private String createToken(String username, UserStatus status, long expireTime) {
+    private String createToken(String username, UserRoleEnum role, long expireTime) {
         Date date = new Date();
         JwtBuilder builder = Jwts.builder()
                 .setSubject(username) // 사용자 식별자값(ID)
@@ -68,15 +68,15 @@ public class JwtUtil {
                 .setIssuedAt(date) // 발급일
                 .signWith(key, signatureAlgorithm); // 암호화 알고리즘
 
-        if (status != null) {
-            builder.claim(AUTHORIZATION_KEY, status); // 사용자 권한
+        if (role != null) {
+            builder.claim(AUTHORIZATION_KEY, role); // 사용자 권한
         }
 
         return BEARER_PREFIX + builder.compact();
     }
 
     // 토큰 생성 (UserRoleEnum 버전)
-    public String createToken(String username, UserStatus role) {
+    public String createToken(String username, UserRoleEnum role) {
         Date date = new Date();
         return BEARER_PREFIX +
                 Jwts.builder()

@@ -1,6 +1,7 @@
 package com.sparta.spartascheduler.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sparta.spartascheduler.entity.UserRoleEnum;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,7 +9,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import com.sparta.spartascheduler.Security.UserDetailsImpl;
 import com.sparta.spartascheduler.dto.LoginRequestDto;
-import com.sparta.spartascheduler.entity.UserStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -32,7 +32,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
             return getAuthenticationManager().authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            requestDto.getUserid(),
+                            requestDto.getUsername(),
                             requestDto.getPassword(),
                             null
                     )
@@ -48,9 +48,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         log.info("로그인 성공 및 JWT 생성");
         UserDetailsImpl userDetails = (UserDetailsImpl) authResult.getPrincipal();
         String username = userDetails.getUsername();
-        UserStatus status = userDetails.getUser().getStatus();
+        UserRoleEnum role = userDetails.getUser().getRole();
 
-        String accessToken = jwtUtil.createAccessToken(username, status);
+        String accessToken = jwtUtil.createAccessToken(username, role);
         String refreshToken = jwtUtil.createRefreshToken(username);
 
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, accessToken);
@@ -66,7 +66,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
 
     @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setCharacterEncoding("utf-8");
         response.setContentType("application/json");

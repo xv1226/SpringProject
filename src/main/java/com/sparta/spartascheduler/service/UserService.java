@@ -1,14 +1,17 @@
 package com.sparta.spartascheduler.service;
 
+import com.sparta.spartascheduler.dto.LoginResponseDto;
+import com.sparta.spartascheduler.dto.SignupResponseDto;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import com.sparta.spartascheduler.dto.LoginRequestDto;
 import com.sparta.spartascheduler.dto.SignupRequestDto;
 import com.sparta.spartascheduler.entity.User;
-import com.sparta.spartascheduler.entity.UserStatus;
+import com.sparta.spartascheduler.entity.UserRoleEnum;
 import com.sparta.spartascheduler.jwt.JwtUtil;
 import com.sparta.spartascheduler.repository.UserRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -30,68 +33,40 @@ public class UserService {
     // ADMIN_TOKEN
     private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
-    public void signup(SignupRequestDto requestDto) {
-        String userid = requestDto.getUserid();
+    public ResponseEntity<SignupResponseDto> signup(SignupRequestDto requestDto) {
         String username = requestDto.getUsername();
-        String intro = requestDto.getIntro();
-        String passwordBefore = requestDto.getPassword();
-        if(passwordBefore.length()<10){
-            throw new IllegalArgumentException("비밀번호는 최소 10글자 이상이어야 합니다.");
-        }
+        String nickname = requestDto.getNickname();
         String password = passwordEncoder.encode(requestDto.getPassword());
-        UserStatus userStatus = UserStatus.ACTIVE;
-        String RefreshToken=jwtUtil.createRefreshToken(username);
-
-
-        //회원 사용자 ID 조건 확인
-        if (!(userid.length() >= 10 && userid.length() <= 20)) {
-            throw new IllegalArgumentException("사용자 ID는 최소 10글자 이상, 최대 20글자 이하여야 합니다.");
-        }
 
         // 회원 중복 확인
-
-        Optional<User> checkUserid = userRepository.findByUserid(userid);
-        Optional<User> checkUserStatus = userRepository.findByStatus(UserStatus.INACTIVE);
-        if (checkUserid.isPresent() && checkUserStatus.isPresent()) {
-            throw new IllegalArgumentException("중복 됐거나 탈퇴한 사용자가 존재합니다.");
-        }
-
-        //회원 상태 확인
-
-
-        // email 중복확인
-        String email = requestDto.getEmail();
-        Optional<User> checkEmail = userRepository.findByEmail(email);
-        if (checkEmail.isPresent()) {
-            throw new IllegalArgumentException("중복된 Email 입니다.");
+        Optional<User> checkUsername = userRepository.findByUsername(username);
+        if (checkUsername.isPresent()) {
+            throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
         }
 
         // 사용자 ROLE 확인
-        UserStatus role = UserStatus.USER;
+        UserRoleEnum role = UserRoleEnum.USER;
         if (requestDto.isAdmin()) {
             if (!ADMIN_TOKEN.equals(requestDto.getAdminToken())) {
                 throw new IllegalArgumentException("관리자 암호가 틀려 등록이 불가능합니다.");
             }
-            role = UserStatus.ADMIN;
+            role = UserRoleEnum.ADMIN;
         }
 
         // 사용자 등록
-        User user = new User(userid, username, password, email, intro, role, userStatus, RefreshToken);
+        User user = new User(username, nickname, password, role);
         userRepository.save(user);
+
+        return ResponseEntity.ok(new SignupResponseDto(user));
     }
 
     @Transactional
     public void deleteById(Long id) {
-        User user = userRepository.findById(id).orElseThrow(
-                EntityNotFoundException::new
-        );
-
-        user.isInactive();
-        userRepository.save(user);
+        userRepository.deleteById(id);
     }
 
-    public void login(LoginRequestDto requestDto, HttpServletResponse res) {
-        String username = requestDto.getUserid();
+    public ResponseEntity<LoginResponseDto> login(LoginRequestDto requestDto, HttpServletResponse res) {
+        String username = requestDto.getUsername();
         String password = requestDto.getPassword();
 
         // 사용자 확인
@@ -107,6 +82,8 @@ public class UserService {
         // JWT 생성 및 쿠키에 저장 후 Response 객체에 추가
         String token = jwtUtil.createToken(user.getUsername(), user.getRole());
         jwtUtil.addJwtToCookie(token, res);
+
+        return ResponseEntity.ok(new LoginResponseDto(user));
     }
 
     public User getUserByUsername(String username) {

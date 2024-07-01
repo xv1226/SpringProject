@@ -1,5 +1,6 @@
 package com.sparta.spartascheduler.controller;
 
+import com.sparta.spartascheduler.dto.LoginResponseDto;
 import com.sparta.spartascheduler.dto.SignupResponseDto;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,7 +36,7 @@ public class UserController {
     }
 
     @PostMapping("/users/login")
-    public ResponseEntity<String> login(LoginRequestDto requestDto, HttpServletResponse res) {
+    public ResponseEntity<LoginResponseDto> login(LoginRequestDto requestDto, HttpServletResponse res) {
 
         return userService.login(requestDto, res);
     }
