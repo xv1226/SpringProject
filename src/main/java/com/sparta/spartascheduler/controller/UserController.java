@@ -30,18 +30,18 @@ public class UserController {
     }
 
 
-    @PostMapping("/users/signup")
+    @PostMapping("/user/signup")
     public ResponseEntity<SignupResponseDto> signup(@RequestBody @Valid SignupRequestDto requestDto) {
         return userService.signup(requestDto);
     }
 
-    @PostMapping("/users/login")
+    @PostMapping("/user/login")
     public ResponseEntity<LoginResponseDto> login(LoginRequestDto requestDto, HttpServletResponse res) {
 
         return userService.login(requestDto, res);
     }
 
-    @PostMapping("/users/logout")
+    @PostMapping("/user/logout")
     public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
         // 현재 사용자의 세션 무효화
         HttpSession session = request.getSession(false);
@@ -61,7 +61,7 @@ public class UserController {
         return ResponseEntity.ok("로그아웃 완료");
     }
 
-    @PostMapping("/users/refresh")
+    @PostMapping("/user/refresh")
     public ResponseEntity<String> refresh(@RequestHeader("RefreshToken") String refreshToken) {
         if (jwtUtil.validateToken(refreshToken)) {
             String username = jwtUtil.getUserInfoFromToken(refreshToken).getSubject();
@@ -71,11 +71,11 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/users/delete")
+    @DeleteMapping("/user/delete")
     public ResponseEntity<String> userDelete(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        User user = userDetails.getUser();
-        userService.deleteById(user.getId());
 
-        return ResponseEntity.ok("회원탈퇴 완료");
+        User user = userDetails.getUser();
+
+        return userService.deleteById(user.getId());
     }
 }

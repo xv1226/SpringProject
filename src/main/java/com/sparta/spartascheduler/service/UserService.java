@@ -61,8 +61,10 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteById(Long id) {
+    public ResponseEntity<String> deleteById(Long id) {
+
         userRepository.deleteById(id);
+        return ResponseEntity.ok("회원탈퇴 완료");
     }
 
     public ResponseEntity<LoginResponseDto> login(LoginRequestDto requestDto, HttpServletResponse res) {

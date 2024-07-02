@@ -11,14 +11,14 @@ import lombok.Setter;
 @Setter
 public class SignupRequestDto {
     @NotBlank
-    @Pattern(regexp = "^[A-Za-z0-9]{10,20}$", message = "아이디는 영어와 숫자만 사용하여 10~20자리여야 합니다.")
+    @Pattern(regexp = "^[a-z0-9]{4,10}$", message = "최소 4자 이상, 10자 이하이며 알파벳 소문자(a~z), 숫자(0~9)")
     private String username;
 
     @NotBlank
     private String nickname;
 
     @NotBlank
-    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[~!@#$%^&*()+|=])[A-Za-z\\d~!@#$%^&*()+|=]{10,20}$", message = "비밀번호는 10~20자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
+    @Pattern(regexp = "^[A-Za-z0-9]{8,15}$", message = "최소 8자 이상, 15자 이하이며 알파벳 대소문자(a~z, A~Z), 숫자(0~9)")
     private String password;
 
     private boolean admin = false;
