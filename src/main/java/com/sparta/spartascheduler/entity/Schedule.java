@@ -1,5 +1,6 @@
 package com.sparta.spartascheduler.entity;
 
+import com.sparta.spartascheduler.dto.ScheduleRequestDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -37,5 +38,10 @@ public class Schedule extends Timestamped {
         this.scheduleTitle=scheduleTitle;
         this.scheduleInfo=scheduleInfo;
         this.user= user;
+    }
+
+    public void updateSchedule(ScheduleRequestDto requestDto){
+        this.scheduleTitle=requestDto.getScheduleTitle();
+        this.scheduleInfo=requestDto.getScheduleInfo();
     }
 }
