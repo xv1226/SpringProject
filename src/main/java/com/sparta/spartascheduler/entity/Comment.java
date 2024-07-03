@@ -1,6 +1,7 @@
 package com.sparta.spartascheduler.entity;
 
 
+import com.sparta.spartascheduler.dto.CommentRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,7 +20,7 @@ public class Comment extends Timestamped{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private String commentInfo;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -35,5 +36,9 @@ public class Comment extends Timestamped{
         this.commentInfo=commentInfo;
         this.schedule=schedule;
         this.user=user;
+    }
+
+    public void updateComment(CommentRequestDto request) {
+        this.commentInfo=request.getCommentInfo();
     }
 }
