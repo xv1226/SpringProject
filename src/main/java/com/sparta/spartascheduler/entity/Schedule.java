@@ -29,7 +29,7 @@ public class Schedule extends Timestamped {
     @Column
     private String scheduleInfo;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 

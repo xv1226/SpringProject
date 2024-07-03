@@ -6,11 +6,9 @@ import com.sparta.spartascheduler.dto.ScheduleResponseDto;
 import com.sparta.spartascheduler.entity.Schedule;
 import com.sparta.spartascheduler.entity.User;
 import com.sparta.spartascheduler.repository.ScheduleRepository;
-import jakarta.transaction.Transactional;
+import org.hibernate.query.Order;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -41,7 +39,7 @@ public class ScheduleService {
     }
 
     public List<ScheduleResponseDto> findByAllSchedule(User user) {
-        return scheduleRepository.findAll().stream().map(ScheduleResponseDto::new).toList();
+        return scheduleRepository.findAllByUserIdOrderByCreatedAtDesc(user.getId()).stream().map(ScheduleResponseDto::new).toList();
     }
 
     public ScheduleResponseDto updateSchedule(User user, Long id, ScheduleRequestDto requestDto) {
@@ -66,5 +64,8 @@ public class ScheduleService {
         return new ScheduleResponseDto(schedule);
     }
 
+    public List<ScheduleResponseDto> deleteAllSchedule(User user){
+        return scheduleRepository.deleteAllByUserId(user.getId()).stream().map(ScheduleResponseDto::new).toList();
+    }
 
 }

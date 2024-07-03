@@ -30,12 +30,12 @@ public class ScheduleController {
         return scheduleService.findBySchedule(userDetails.getUser(),id);
     }
 
-    @GetMapping("/scheduler/select")
+    @GetMapping("/scheduler/selectAll")
     public List<ScheduleResponseDto> getAllSchedule(@AuthenticationPrincipal UserDetailsImpl userDetails){
         return scheduleService.findByAllSchedule(userDetails.getUser());
     }
 
-    @PostMapping("/scheduler/update")
+    @PutMapping("/scheduler/update")
     public ScheduleResponseDto updateSchedule(@AuthenticationPrincipal UserDetailsImpl userDetails,@RequestParam Long id,@RequestBody ScheduleRequestDto requestDto){
         return scheduleService.updateSchedule(userDetails.getUser(),id,requestDto);
     }
@@ -43,6 +43,11 @@ public class ScheduleController {
     @DeleteMapping("/scheduler/delete")
     public ScheduleResponseDto deleteSchedule(@AuthenticationPrincipal UserDetailsImpl userDetails,@RequestParam Long id){
         return scheduleService.deleteSchedule(userDetails.getUser(),id);
+    }
+
+    @DeleteMapping("/scheduler/deleteAll")
+    public List<ScheduleResponseDto> deleteAllSchedule(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return scheduleService.deleteAllSchedule(userDetails.getUser());
     }
 
 }

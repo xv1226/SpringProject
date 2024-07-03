@@ -72,10 +72,10 @@ public class UserController {
     }
 
     @DeleteMapping("/user/delete")
-    public ResponseEntity<String> userDelete(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<String> userDelete(@AuthenticationPrincipal UserDetailsImpl userDetails,@RequestParam String password) {
 
         User user = userDetails.getUser();
 
-        return userService.deleteById(user.getId());
+        return userService.deleteById(user.getId(),password);
     }
 }

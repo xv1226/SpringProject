@@ -61,7 +61,12 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseEntity<String> deleteById(Long id) {
+    public ResponseEntity<String> deleteById(Long id,String password) {
+        User user = userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
 
         userRepository.deleteById(id);
         return ResponseEntity.ok("회원탈퇴 완료");

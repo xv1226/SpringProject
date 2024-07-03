@@ -7,6 +7,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -35,6 +39,8 @@ public class User extends Timestamped {
     @Column(nullable = false)
     private UserRoleEnum role;
 
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Schedule> schedule = new ArrayList<>();
 
     public User(String username, String nickname, String password, UserRoleEnum role) {
         this.username = username;
