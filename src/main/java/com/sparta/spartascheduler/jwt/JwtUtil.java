@@ -32,7 +32,7 @@ public class JwtUtil {
     // Token 식별자
     public static final String BEARER_PREFIX = "Bearer ";
     // 토큰 만료시간
-    private final long ACCESS_TOKEN_TIME = 30 * 60 * 1000L; // 30분
+    private final long ACCESS_TOKEN_TIME = 5 * 1000L; // 30분
     private final long REFRESH_TOKEN_TIME = 14 * 24 * 60 * 60 * 1000L; // 2주
 
     @Value("${jwt.secret.key}") // Base64 Encode 한 SecretKey
@@ -75,7 +75,7 @@ public class JwtUtil {
         return BEARER_PREFIX + builder.compact();
     }
 
-    // 토큰 생성 (UserRoleEnum 버전)
+/*    // 토큰 생성 (UserRoleEnum 버전)
     public String createToken(String username, UserRoleEnum role) {
         Date date = new Date();
         return BEARER_PREFIX +
@@ -86,7 +86,7 @@ public class JwtUtil {
                         .setIssuedAt(date) // 발급일
                         .signWith(key, signatureAlgorithm) // 암호화 알고리즘
                         .compact();
-    }
+    }*/
 
     // header 에서 JWT 가져오기
     public String getJwtFromHeader(HttpServletRequest request) {
@@ -120,7 +120,7 @@ public class JwtUtil {
         }
     }
 
-    // JWT Cookie 에 저장 (단일 토큰 버전)
+/*    // JWT Cookie 에 저장 (단일 토큰 버전)
     public void addJwtToCookie(String token, HttpServletResponse res) {
         try {
             token = URLEncoder.encode(token, "utf-8").replaceAll("\\+", "%20"); // Cookie Value 에는 공백이 불가능해서 encoding
@@ -131,7 +131,7 @@ public class JwtUtil {
         } catch (UnsupportedEncodingException e) {
             logger.error(e.getMessage());
         }
-    }
+    }*/
 
     // HttpServletRequest 에서 Cookie Value : JWT 가져오기
     public String getTokenFromRequest(HttpServletRequest req) {

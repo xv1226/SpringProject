@@ -24,7 +24,8 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,
+            JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
@@ -61,7 +62,7 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseEntity<String> deleteById(Long id,String password) {
+    public ResponseEntity<String> deleteById(Long id, String password) {
         User user = userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
@@ -72,7 +73,8 @@ public class UserService {
         return ResponseEntity.ok("회원탈퇴 완료");
     }
 
-    public ResponseEntity<LoginResponseDto> login(LoginRequestDto requestDto, HttpServletResponse res) {
+    public ResponseEntity<LoginResponseDto> login(LoginRequestDto requestDto,
+            HttpServletResponse res) {
         String username = requestDto.getUsername();
         String password = requestDto.getPassword();
 
@@ -87,8 +89,10 @@ public class UserService {
         }
 
         // JWT 생성 및 쿠키에 저장 후 Response 객체에 추가
-        String token = jwtUtil.createToken(user.getUsername(), user.getRole());
-        jwtUtil.addJwtToCookie(token, res);
+        String accessToken = jwtUtil.createAccessToken(user.getUsername(), user.getRole());
+        String refreshToken = jwtUtil.createRefreshToken(user.getUsername());
+
+        jwtUtil.addJwtToCookie(accessToken, refreshToken, res);
 
         return ResponseEntity.ok(new LoginResponseDto(user));
     }
