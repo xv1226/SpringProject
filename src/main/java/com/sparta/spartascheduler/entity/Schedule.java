@@ -14,7 +14,6 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "Schedule")
 public class Schedule extends Timestamped {
@@ -29,19 +28,26 @@ public class Schedule extends Timestamped {
     @Column
     private String scheduleInfo;
 
+    @Column
+    private Long scheduleGoodCount;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ScheduleGood> scheduleGood = new ArrayList<>();
 
-    public Schedule(String scheduleTitle,String scheduleInfo,User user){
-        this.scheduleTitle=scheduleTitle;
-        this.scheduleInfo=scheduleInfo;
-        this.user= user;
+
+    public Schedule(String scheduleTitle, String scheduleInfo, User user, Long scheduleGoodCount) {
+        this.scheduleTitle = scheduleTitle;
+        this.scheduleInfo = scheduleInfo;
+        this.user = user;
+        this.scheduleGoodCount = scheduleGoodCount;
     }
 
-    public void updateSchedule(ScheduleRequestDto requestDto){
-        this.scheduleTitle=requestDto.getScheduleTitle();
-        this.scheduleInfo=requestDto.getScheduleInfo();
+    public void updateSchedule(ScheduleRequestDto requestDto) {
+        this.scheduleTitle = requestDto.getScheduleTitle();
+        this.scheduleInfo = requestDto.getScheduleInfo();
     }
 }

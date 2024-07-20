@@ -5,8 +5,8 @@ import com.sparta.spartascheduler.dto.ScheduleRequestDto;
 import com.sparta.spartascheduler.dto.ScheduleResponseDto;
 import com.sparta.spartascheduler.entity.Schedule;
 import com.sparta.spartascheduler.entity.User;
+import com.sparta.spartascheduler.repository.ScheduleGoodRepository;
 import com.sparta.spartascheduler.repository.ScheduleRepository;
-import org.hibernate.query.Order;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,17 +15,20 @@ import java.util.List;
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
+    private final ScheduleGoodRepository scheduleGoodRepository;
 
-    public ScheduleService(ScheduleRepository scheduleRepository) {
+    public ScheduleService(ScheduleRepository scheduleRepository, ScheduleGoodRepository scheduleGoodRepository) {
         this.scheduleRepository = scheduleRepository;
+        this.scheduleGoodRepository = scheduleGoodRepository;
     }
 
     public ScheduleResponseDto createSchedule(User user, ScheduleRequestDto requestDto) {
         String scheduleTitle = requestDto.getScheduleTitle();
         String scheduleInfo = requestDto.getScheduleInfo();
+        Long scheduleGoodCount = 0L;
 
 
-        Schedule schedule = new Schedule(scheduleTitle, scheduleInfo, user);
+        Schedule schedule = new Schedule(scheduleTitle, scheduleInfo, user, scheduleGoodCount);
         scheduleRepository.save(schedule);
         return new ScheduleResponseDto(schedule);
     }
@@ -54,7 +57,7 @@ public class ScheduleService {
         return new ScheduleResponseDto(schedule);
     }
 
-    public ScheduleResponseDto deleteSchedule(User user, Long id){
+    public ScheduleResponseDto deleteSchedule(User user, Long id) {
         Schedule schedule = scheduleRepository.findById(id).orElseThrow();
         if (!(user.getId().equals(schedule.getUser().getId()))) {
             throw new IllegalArgumentException("userId가 일치하지 않습니다");
@@ -64,7 +67,7 @@ public class ScheduleService {
         return new ScheduleResponseDto(schedule);
     }
 
-    public List<ScheduleResponseDto> deleteAllSchedule(User user){
+    public List<ScheduleResponseDto> deleteAllSchedule(User user) {
         return scheduleRepository.deleteAllByUserId(user.getId()).stream().map(ScheduleResponseDto::new).toList();
     }
 

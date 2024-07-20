@@ -3,7 +3,6 @@ package com.sparta.spartascheduler.entity;
 
 import com.sparta.spartascheduler.dto.CommentRequestDto;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,7 +10,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "comment")
 public class Comment extends Timestamped{

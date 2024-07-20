@@ -14,7 +14,6 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "user")
 public class User extends Timestamped {
@@ -41,6 +40,12 @@ public class User extends Timestamped {
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Schedule> schedule = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comment = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ScheduleGood> scheduleGood = new ArrayList<>();
 
     public User(String username, String nickname, String password, UserRoleEnum role) {
         this.username = username;

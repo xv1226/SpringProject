@@ -18,4 +18,9 @@ public abstract class Timestamped {
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createdAt;
 
+    @LastModifiedDate
+    @Column
+    @Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime modifiedAt;
+
 }
